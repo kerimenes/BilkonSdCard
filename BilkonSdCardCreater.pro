@@ -15,12 +15,14 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     cardassistant.cpp \
-    settings/applicationsettings.cpp \
-    settings/debug.cpp
+    qjsonmodel.cpp
 
 HEADERS  += mainwindow.h \
     cardassistant.h \
-    settings/applicationsettings.h \
-    settings/debug.h
+    settings/debug.h \
+    qjsonmodel.h
 
 FORMS    += mainwindow.ui
+
+QMAKE_CXXFLAGS += -std=c++11
+

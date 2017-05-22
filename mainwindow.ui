@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>832</width>
-    <height>565</height>
+    <height>607</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,33 +18,17 @@
     <item>
      <widget class="QGroupBox" name="groupBox">
       <property name="title">
-       <string>GroupBox</string>
+       <string/>
       </property>
       <layout class="QGridLayout" name="gridLayout_5">
-       <item row="1" column="0">
-        <widget class="QGroupBox" name="groupBox_5">
-         <property name="title">
-          <string>GroupBox</string>
+       <item row="2" column="0">
+        <widget class="QProgressBar" name="progressBar">
+         <property name="value">
+          <number>24</number>
          </property>
-         <layout class="QGridLayout" name="gridLayout_6">
-          <item row="0" column="0">
-           <widget class="QProgressBar" name="progressBar">
-            <property name="value">
-             <number>24</number>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QPushButton" name="pushButton_3">
-            <property name="text">
-             <string>PushButton</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
         </widget>
        </item>
-       <item row="0" column="0">
+       <item row="0" column="0" colspan="2">
         <widget class="QStackedWidget" name="stackedWidget">
          <property name="currentIndex">
           <number>0</number>
@@ -56,18 +40,18 @@
              <property name="title">
               <string>Auto Insert Media</string>
              </property>
-             <layout class="QGridLayout" name="gridLayout">
-              <item row="2" column="2">
-               <widget class="QPushButton" name="insert">
+             <layout class="QHBoxLayout" name="horizontalLayout">
+              <item>
+               <widget class="QComboBox" name="mediatypes"/>
+              </item>
+              <item>
+               <widget class="QPushButton" name="buttonFormat">
                 <property name="text">
-                 <string>Insert</string>
+                 <string>FORMAT</string>
                 </property>
                </widget>
               </item>
-              <item row="2" column="0">
-               <widget class="QComboBox" name="mediatypes"/>
-              </item>
-              <item row="1" column="2">
+              <item>
                <widget class="QToolButton" name="statusMedia">
                 <property name="text">
                  <string/>
@@ -82,18 +66,11 @@
              <property name="title">
               <string>Sd card types selection</string>
              </property>
-             <layout class="QGridLayout" name="gridLayout_2">
-              <item row="1" column="1">
-               <widget class="QPushButton" name="selecttype">
-                <property name="text">
-                 <string>Select</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0">
+             <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <item>
                <widget class="QComboBox" name="cardtypes"/>
               </item>
-              <item row="0" column="1">
+              <item>
                <widget class="QToolButton" name="statusTypes">
                 <property name="text">
                  <string/>
@@ -108,29 +85,29 @@
              <property name="title">
               <string>Version Selection</string>
              </property>
-             <layout class="QGridLayout" name="gridLayout_3">
-              <item row="0" column="1">
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <item>
+               <widget class="QComboBox" name="versionList"/>
+              </item>
+              <item>
                <widget class="QToolButton" name="statusVersion">
                 <property name="text">
                  <string/>
                 </property>
                </widget>
               </item>
-              <item row="1" column="1">
-               <widget class="QPushButton" name="selectVersion">
-                <property name="text">
-                 <string>Select</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0">
-               <widget class="QComboBox" name="versionList"/>
-              </item>
              </layout>
             </widget>
            </item>
           </layout>
          </widget>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QPushButton" name="pushButton_3">
+         <property name="text">
+          <string>START</string>
+         </property>
         </widget>
        </item>
       </layout>
@@ -144,7 +121,7 @@
      <x>0</x>
      <y>0</y>
      <width>832</width>
-     <height>19</height>
+     <height>30</height>
     </rect>
    </property>
   </widget>
