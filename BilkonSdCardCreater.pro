@@ -15,12 +15,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     cardassistant.cpp \
-    qjsonmodel.cpp
+    json/jsonhelper.cpp \
+    json/qjsonmodel.cpp
 
 HEADERS  += mainwindow.h \
     cardassistant.h \
-    settings/debug.h \
-    qjsonmodel.h
+    json/jsonhelper.h \
+    json/qjsonmodel.h
 
 FORMS    += mainwindow.ui
 

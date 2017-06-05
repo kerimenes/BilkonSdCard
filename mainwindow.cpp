@@ -39,7 +39,12 @@ void MainWindow::on_mediatypes_activated(const QString &arg1)
 
 void MainWindow::on_cardtypes_activated(const QString &arg1)
 {
-	card->ubootScriptsCreate(arg1);
+	int err = card->createConfigScript(arg1);
+	if (err) {
+		QMessageBox::warning(this, "u-boot-scipts", "error");
+		ui->statusTypes->setStyleSheet(red);
+	}
+	ui->statusTypes->setStyleSheet(green);
 }
 
 void MainWindow::on_versionList_activated(const QString &arg1)

@@ -8,30 +8,77 @@
 #include <QJsonValue>
 #include <QMessageBox>
 
-#include <unistd.h>
-
-
 CardAssistant::CardAssistant()
 {
 	filename = "/home/kerim/myfs/source-codes/bilkon/BilkonSdCard/creater.json";
-	obj = jsonRead();
-	if(obj.isEmpty())
-		return;
+	json = new JsonHelper(filename);
+
 	p = new QProcess();
+}
+
+int CardAssistant::createConfigScript(const QString &script)
+{
+	QDir dir;
+	QString path = json->value("folder.sdcard_prog");
+	dir.setCurrent(path);
+
+	QString config = "config.sh";
+	QFile f(config);
+	if (!f.open(QIODevice::WriteOnly | QIODevice::Text)) {
+		logFile(QString("error writing test script '%1'").arg(config));
+		return -2;
+	}
+	f.write("#!/bin/bash\n\n");
+	f.write("\n");
+
+	/* Versiyon check */
+	QString ramdisk = json->value("release_ramdisk");
+	QString rootfs = json->value("release_rootfs");
+	QString uimage = json->value("release_uimage");
+	if (uimage.isEmpty() | rootfs.isEmpty() | ramdisk.isEmpty()) {
+		logFile("Release versiyonlari yazilmamış seçili versiyon yok.");
+		return -3;
+	}
+	f.write(QString("ramdisk=%1\n").arg(ramdisk).toUtf8());
+	f.write(QString("rootfs=%1\n").arg(rootfs).toUtf8());
+	f.write(QString("uimage=%1\n").arg(uimage).toUtf8());
+
+	/* uboot_scripts check */
+	int err = ubootScriptsCreate(script);
+	if(err) {
+		logFile("Not create uboot-scripts");
+		return -4;
+	}
+	QString ubootscr = json->value(QString("list.%1").arg(script)).replace("txt", "scr");
+	f.write("\n");
+	f.write(QString("ubootscr=%1\n").arg(ubootscr).toUtf8());
+
+	f.close();
+	return 0;
 }
 
 int CardAssistant::ubootScriptsCreate(const QString &script)
 {
-	qDebug() << script;
 	QDir dir;
-	QString path = obj.value("ubootscripts").toString();
+	QString path = json->value("folder.uboot_scripts");
 	dir.setCurrent(path);
+	QString bootTxt = json->value(QString("list.%1").arg(script));
+	QString bootScr = bootTxt.replace("txt", "scr");
+	QString compileBootCmd = QString("mkimage -A arm -O linux -T script -d %1 %2").arg(bootTxt).arg(bootScr);
 
-	qDebug() << obj.value("list.0.Nand_Silme") << obj;
-	QString option = obj.value(QString("list.0.%1").arg(script)).toString();
-	qDebug() << option;
-	QString cmd = "mkimage -A arm -O linux -T script -d ${ubootscr%.scr}.txt $ubootscr";
+	int err = processRun(compileBootCmd);
+	if(err)
+		logFile("PRocess error");
 
+	QString data = p->readAllStandardOutput().data();
+	if (data.contains("ARM Linux Script")) {
+		qDebug() << "Başarili";
+		return 0;
+	}
+	else {
+		qDebug() << "Failed";
+		return -1;
+	}
 }
 
 int CardAssistant::releaseParse(QString release)
@@ -53,7 +100,7 @@ int CardAssistant::releaseParse(QString release)
 int CardAssistant::checkReleaseFile(const QString release)
 {
 	QDir dir;
-	QString path = obj.value("release_path").toString();
+	QString path = json->value("folder.binaries");
 	dir.setCurrent(path);
 
 	QString releasename = release.split(".").at(0);
@@ -69,7 +116,7 @@ int CardAssistant::checkReleaseFile(const QString release)
 int CardAssistant::untarRelease(QString release)
 {
 	QDir dir;
-	QString path = obj.value("release_path").toString();
+	QString path = json->value("folder.binaries");
 	dir.setCurrent(path);
 
 	int err = p->execute("tar", QStringList() << "xf" << release);
@@ -79,7 +126,7 @@ int CardAssistant::untarRelease(QString release)
 int CardAssistant::getConfigPath(QString release)
 {
 	QDir dir;
-	QString path = obj.value("release_path").toString();
+	QString path = json->value("folder.binaries");
 	dir.setCurrent(path);
 
 	QString ramdisk;
@@ -110,10 +157,16 @@ int CardAssistant::getConfigPath(QString release)
 	if(!data.isEmpty())
 		uimage = QString("%1/%2").arg(path).arg(data);
 
-	obj.insert("uimage", uimage.split("\n").at(0));
-	obj.insert("rootfs", rootfs.split("\n").at(0));
-	obj.insert("ramdisk", ramdisk.split("\n").at(0));
-	return saveJson(obj);
+	err = json->insert("release_uimage", uimage.split("\n").at(0));
+	if (err)
+		return -3;
+	err = json->insert("release_rootfs", rootfs.split("\n").at(0));
+	if (err)
+		return -3;
+	err = json->insert("release_ramdisk", ramdisk.split("\n").at(0));
+	if (err)
+		return -3;
+	return json->save();
 }
 
 int CardAssistant::runFormat(const QString &status, const QString &cardtype, QProgressBar *bar)
@@ -124,7 +177,7 @@ int CardAssistant::runFormat(const QString &status, const QString &cardtype, QPr
 	t.start();
 	showProgressBar(bar);
 	QDir dir;
-	QString path = obj.value("sd_prog_path").toString();
+	QString path = json->value("folder.sdcard_prog");
 	dir.setCurrent(path);
 
 	QStringList flds = cardtype.split(" ");
@@ -135,8 +188,9 @@ int CardAssistant::runFormat(const QString &status, const QString &cardtype, QPr
 	if (size.split(",").at(0).toInt() > 8)
 		return -1;
 
-	QString cmd = obj.value("sd_format").toString();
-	int err =  processRun(cmd.arg(card));
+	QString cmdSudo = json->value("sudo_cmd");
+	QString cmdFormat = QString("./format.sh /dev/%1").arg(card);
+	int err =  processRun(cmdSudo.arg(cmdFormat));
 	if (err)
 		logFile("Process Error ");
 	while(!p->readAllStandardOutput().isEmpty()) {
@@ -158,7 +212,7 @@ QStringList CardAssistant::versionTypesInit()
 {
 	QStringList versiontypes;
 
-	int err = processRun(QString("ls -A %1").arg(obj.value("release_path").toString()));
+	int err = processRun(QString("ls -A %1").arg(json->value("folder.binaries")));
 	if (err)
 		logFile("Process Error ");
 	QString data = p->readAllStandardOutput().data();
@@ -176,8 +230,7 @@ QStringList CardAssistant::versionTypesInit()
 
 QStringList CardAssistant::SDCardTypesInit()
 {
-	QStringList cardtypes = obj.value("list").toObject().keys();
-	qDebug() << cardtypes;
+	QStringList cardtypes = json->valueObject("list").keys();
 	return cardtypes;
 }
 
@@ -233,7 +286,7 @@ int CardAssistant::processRun(const QString &cmd)
 
 void CardAssistant::logFile(const QString &logdata)
 {
-	QString logpath = obj.value("log_path").toString();
+	QString logpath = json->value("log_path");
 	QFile log(logpath);
 	if (!log.open(QIODevice::ReadWrite | QIODevice::Append))
 		return;
@@ -253,35 +306,4 @@ void CardAssistant::showProgressBar(QProgressBar *bar, int maxRange)
 void CardAssistant::progress(QProgressBar *bar, int value)
 {
 	bar->setValue(value);
-}
-
-QJsonObject CardAssistant::jsonRead()
-{
-	QFile f(filename);
-	if (!f.open(QIODevice::ReadWrite | QIODevice::Text))
-		return QJsonObject();
-	const QByteArray &json = f.readAll();
-	f.close();
-
-	QJsonDocument doc(QJsonDocument::fromJson(json));
-	if(!doc.isObject())
-		return QJsonObject();
-	QJsonObject root = doc.object();
-//	qDebug() << root.value("SDK_path").toString();
-	return root;
-}
-
-int CardAssistant::saveJson(QJsonObject root)
-{
-	QString tmpname = QString(filename).replace(".json", ".tmp");
-	QFile f(tmpname);
-	if (!f.open(QIODevice::WriteOnly))
-		return -2;
-	f.write(QJsonDocument(root).toJson());
-	fsync(f.handle());
-	f.close();
-	rename(qPrintable(tmpname), qPrintable(filename));
-	/* w/o sync() jffs2 fails */
-	::sync();
-	return 0;
 }

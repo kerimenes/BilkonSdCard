@@ -4,7 +4,7 @@
 #include <QProcess>
 #include <QProgressBar>
 
-#include "qjsonmodel.h"
+#include "json/jsonhelper.h"
 
 class CardAssistant: public QObject
 {
@@ -19,19 +19,20 @@ public:
 	int untarRelease(QString release);
 	int getConfigPath(QString release);
 	int ubootScriptsCreate(const QString &script);
+	int createConfigScript(const QString &script);
 protected:
 	int processRun(const QString &cmd);
 	void logFile(const QString &logdata);
 	void showProgressBar(QProgressBar *bar, int maxRange = 99);
 	void progress(QProgressBar *bar, int value);
 	QJsonObject jsonRead();
-	int saveJson(QJsonObject root);
 	int checkReleaseFile(const QString release);
+	QString replaceVariable(QString str);
 private:
 	QJsonModel *model;
 	QProcess *p;
 	QString filename;
-	QJsonObject obj;
+	JsonHelper *json;
 };
 
 #endif // CARDASSISTANT_H
