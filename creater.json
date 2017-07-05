@@ -1,35 +1,32 @@
 {
     "PASS": "qwe",
-    "SDK": "/home/kerim/myfs/source-codes/bilkon/vk365_sdk",
+    "SDK": "/home/kerim/myfs/codes/vk365_sdk_sdkart/vk365_sdk/",
+    "current": {
+        "date": "160617",
+        "firmware_version": " \"1.3.6\",\n",
+        "media": "sdb",
+        "num_of_mac_files": "3",
+        "sd_types": "Nand Programlama[Yeni Nand]"
+    },
     "folder": {
         "binaries": "$SDK/tools/binaries",
         "sdcard_prog": "$SDK/tools/sdcard_prog",
+        "tools": "$SDK/tools",
         "uboot_scripts": "$SDK/tools/sdcard_prog/u-boot-scripts/"
     },
     "list": {
+        "Nand Programlama Modu": "boot_zero_prog.txt",
+        "Nand Programlama[Yeni Nand]": "boot_zero_sd_new_mtd.txt",
         "Nand Siler": "rescue_erase.txt",
-        "Nand Silme ve Sd Kart ile Programlama": "",
+        "Nand'i Siler ve IP'yi Programlamaya Moduna Geçirir": "rescue_erase_cammgr.txt",
+        "Programlama Modu ve Mac Atma (poe)": "boot_zero_SD_mac.txt",
         "Sd Kart ile IP'yi Başlatma": "boot_zero_sd.txt",
-        "Programlama Moduna geçirir.": "boot_zero_prog.txt",
-        "Sd Kart ile IP'yi Programlama": "boot_zero_sd_prog.txt",
-        "Programlama Modu ve Mac Atma (poe)": "boot_zero_SD_mac.txt",
-        "Nand Programlama[Yeni Nand bölümlemesi]": "boot_zero_sd_new_mtd.txt",
-        "Nand'i Siler ve IP'yi Programlamaya Moduna Geçirir": "rescue_erase_cammgr.txt"
-    },
-    "Command": {
-        "Nand Siler": "./install_sd.sh /dev/%1",
-        "Nand Silme ve Sd Kart ile Programlama": "",
-        "Sd Kart ile IP'yi Başlatma": "./install_sd.sh /dev/%1",
-        "Programlama Moduna geçirir.": "./install_nand.sh /dev/%1",
-        "Sd Kart ile IP'yi Programlama": "boot_zero_sd_prog.txt",
-        "Programlama Modu ve Mac Atma (poe)": "boot_zero_SD_mac.txt",
-        "Nand Programlama[Yeni Nand bölümlemesi]": "boot_zero_sd_new_mtd.txt",
-        "Nand'i Siler ve IP'yi Programlamaya Moduna Geçirir": "rescue_erase_cammgr.txt"
-
+        "Sd Kart ile IP'yi Programlama": "boot_zero_sd_prog.txt"
     },
     "log_path": "/tmp/asdasd.txt",
-    "release_ramdisk": "/home/kerim/myfs/source-codes/bilkon/vk365_sdk/tools/binaries/release_120417/ramdisk_zero.gz",
-    "release_rootfs": "/home/kerim/myfs/source-codes/bilkon/vk365_sdk/tools/binaries/release_120417/rootfs.tar.gz",
-    "release_uimage": "/home/kerim/myfs/source-codes/bilkon/vk365_sdk/tools/binaries/release_120417/uImage",
-    "sudo_cmd": "echo $PASS | sudo -S %1 2>&1"
+    "release": {
+        "ramdisk": "/home/kerim/myfs/codes/vk365_sdk_sdkart/vk365_sdk//tools/binaries/release_160617/ramdisk_zero.gz",
+        "rootfs": "/home/kerim/myfs/codes/vk365_sdk_sdkart/vk365_sdk//tools/binaries/release_160617/rootfs.tar.gz",
+        "uimage": "/home/kerim/myfs/codes/vk365_sdk_sdkart/vk365_sdk//tools/binaries/release_160617/uImage"
+    }
 }

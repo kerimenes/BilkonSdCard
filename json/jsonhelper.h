@@ -3,8 +3,9 @@
 
 #include "qjsonmodel.h"
 
-class JsonHelper
+class JsonHelper : public QObject
 {
+	Q_OBJECT
 public:
 	JsonHelper(const QString &file);
 	int save();
@@ -14,9 +15,12 @@ public:
 protected:
 	QString replaceVariable(QString str);
 	QJsonObject jsonRead(const QString &filename);
+protected slots:
+	void saveAll();
 private:
 	QJsonObject obj;
 	QString filename;
+	QTimer *timer;
 };
 
 #endif // JSONHELPER_H

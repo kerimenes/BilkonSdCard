@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <unistd.h>
 #include <QJsonArray>
+#include <QTimer>
 
 JsonHelper::JsonHelper(const QString &file)
 {
@@ -11,6 +12,15 @@ JsonHelper::JsonHelper(const QString &file)
 	obj = jsonRead(filename);
 	if (obj.isEmpty())
 		return;
+	timer = new QTimer();
+	timer->start(1000);
+	connect(timer, SIGNAL(timeout()), SLOT(saveAll()));
+}
+
+void JsonHelper::saveAll()
+{
+	save();
+	timer->setInterval(1000);
 }
 
 QJsonObject JsonHelper::jsonRead(const QString &filename)
@@ -75,9 +85,8 @@ int JsonHelper::insert(const QString &key, const QString &value)
 		stats_obj = obj.value(flds.at(0)).toObject();
 		stats_obj[flds.at(1)] = value;
 		obj.insert(flds.at(0), stats_obj);
+		return 0;
 	} else {
-		if (key.isEmpty())
-			return -1;
 		obj.insert(key, value);
 		return 0;
 	}
